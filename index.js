@@ -1,8 +1,10 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const app = express();
+// app.use(bodyParser);
 
 const PORT = 5000;
 app.use(cors());
@@ -14,14 +16,15 @@ function sendEmail(email, subject, message) {
       service: "gmail",
       auth: {
         user: "ymohanajay@gmail.com@",
-        pass: "cuvpfhoduuqvhqfg",
+        pass: "okmntdqdjmrxtkuo",
       },
     });
+
     const mail_configs = {
       from: "ymohanajay@gmail.com",
-      to: "mohanajayellapu@gmail.com",
-      subject: "Get Legal advise",
-      text: "Hi This is Y Mohan Ajay",
+      to: email,
+      subject: subject,
+      text: message,
     };
 
     transport.sendMail(mail_configs, function (error, info) {
@@ -35,9 +38,13 @@ function sendEmail(email, subject, message) {
 }
 
 app.post("/sendform", (req, res) => {
-  sendEmail(req.query)
-    .then((response) => console.log("Success"))
-    .catch((error) => res.status(500).send(error.message));
+  sendEmail(req.body.email, req.body.subject, req.body.message)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
 
 app.listen(PORT, () => {
